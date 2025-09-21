@@ -4,7 +4,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendEmailVerification,
+  reload
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -16,21 +18,52 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Auth functions
-export const registerUser = (email, password) => {
-  return createUserWithEmailAndPassword(auth, email, password);
+// Register & send verification email
+export const registerUser = async (email, password) => {
+  try {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+
+    // Send verification email
+    await sendEmailVerification(user);
+    console.log("Verification email sent to:", email);
+
+    return user;
+  } catch (error) {
+    console.error("Registration error:", error);
+    throw error;
+  }
 };
 
-export const loginUser = (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password);
+// Login only if email is verified
+export const loginUser = async (email, password) => {
+  try {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+
+    // Reload user to get latest emailVerified status
+    await reload(user);
+
+    if (!user.emailVerified) {
+      await signOut(auth);
+      throw new Error("Please verify your email before logging in. Check your inbox!");
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 };
 
-export const logoutUser = () => {
-  return signOut(auth);
+export const logoutUser = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error('Logout error:', error);
+    throw error;
+  }
 };
 
 export const onAuthChange = (callback) => {

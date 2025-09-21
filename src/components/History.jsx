@@ -65,10 +65,18 @@ function History({ user }) {
               <strong>Q:</strong> {query.question}
             </div>
             {query.answer && (
-              <div className="history-answer">
-                <strong>A:</strong> {query.answer}
-              </div>
-            )}
+  <div className="history-answer">
+    <strong>A:</strong>
+    <div className="mt-2 space-y-2">
+      {query.answer.split("\n").map((doc, index) => (
+        <div key={index} className="p-2 rounded bg-gray-50 border">
+          <span>{doc}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
           </div>
         ))}
       </div>

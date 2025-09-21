@@ -42,47 +42,50 @@ function ChatBox({ user }) {
   };
 
   return (
-    <div className="chat-container">
-      <form onSubmit={handleAsk} className="question-form">
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="Ask a question..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            disabled={loading}
-            className="question-input"
-          />
-          <button type="submit" disabled={loading || !question.trim()}>
-            {loading ? 'Searching...' : 'Ask'}
-          </button>
-        </div>
-      </form>
+   <div className="chat-container">
+  <div className="chat-content">
+    {error && (
+      <div className="error-box">
+        <strong>Error:</strong> {error}
+      </div>
+    )}
 
-      {error && (
-        <div className="error-box">
-          <strong>Error:</strong> {error}
+    {answer && (
+      <div className="answer-box">
+        <h3>Answer:</h3>
+        <div className="answer-content">
+          {answer.split('\n').map((line, i) => (
+            <p key={i}>{line}</p>
+          ))}
         </div>
-      )}
+      </div>
+    )}
 
-      {answer && (
-        <div className="answer-box">
-          <h3>Answer:</h3>
-          <div className="answer-content">
-            {answer.split('\n').map((line, i) => (
-              <p key={i}>{line}</p>
-            ))}
-          </div>
-        </div>
-      )}
+    {loading && (
+      <div className="loading-spinner">
+        <div className="spinner"></div>
+        <p>Searching knowledge base...</p>
+      </div>
+    )}
+  </div>
 
-      {loading && (
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Searching knowledge base...</p>
-        </div>
-      )}
+  <form onSubmit={handleAsk} className="question-form">
+    <div className="input-group">
+      <input
+        type="text"
+        placeholder="Ask a question..."
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        disabled={loading}
+        className="question-input"
+      />
+      <button type="submit" disabled={loading || !question.trim()}>
+        {loading ? 'Searching...' : 'Ask'}
+      </button>
     </div>
+  </form>
+</div>
+
   );
 }
 

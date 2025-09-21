@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { onAuthChange } from './firebase';
+import { onAuthChange, logoutUser } from './firebase'; // Add logoutUser to the import
 import Login from './components/Login';
 import ChatBox from './components/ChatBox';
 import History from './components/History';
@@ -18,6 +18,14 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -38,14 +46,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>RAG Assistant</h1>
-        <div className="user-info">
-          <span>{user.email}</span>
-          <button onClick={() => auth.signOut()}>Logout</button>
-        </div>
-      </header>
-      
-      <nav className="tab-nav">
+        <h1>RAG Summarizer</h1>     
+         <nav className="tab-nav">
         <button 
           className={activeTab === 'chat' ? 'active' : ''} 
           onClick={() => setActiveTab('chat')}
@@ -58,7 +60,13 @@ function App() {
         >
           History
         </button>
-      </nav>
+      </nav>    
+        <div className="user-info">
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      </header>
+      
+     
 
       <main className="app-main">
         {activeTab === 'chat' && <ChatBox user={user} />}

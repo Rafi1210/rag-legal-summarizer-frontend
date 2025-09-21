@@ -65,8 +65,9 @@ function Login() {
         <div className="switch-mode">
           <p>
             {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button 
-              type="button"
+            <button>
+                <a 
+              
               onClick={() => {
                 setIsLogin(!isLogin);
                 setError('');
@@ -74,6 +75,7 @@ function Login() {
               disabled={loading}
             >
               {isLogin ? 'Register' : 'Login'}
+            </a>
             </button>
           </p>
         </div>
